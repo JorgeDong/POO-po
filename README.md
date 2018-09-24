@@ -1,3 +1,3 @@
 # POO-po
 
-¡¡This is our incredible POO project!!
+## This is our amazing POO project!
