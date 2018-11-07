@@ -9,17 +9,18 @@ import java.util.Random;
 /*
     City: Representa un nodo en el mapa
     -> Tiene coordenadas (x, y)
-    -> Un ID que lo represena (AUN NO USADO)
+    -> Un ID que lo representa (Una letra)
  */
 public class City {
     //Atributos
-    private int id;
-    private double x, y;
+    private char id;
+    private int x, y;
 
     //Constructores
     public City(double x, double y) {
         this.x = x;
         this.y = y;
+        this.id = id;
     }
     public City() {
         Random r = new Random();
@@ -27,8 +28,9 @@ public class City {
         this.y = r.nextInt(200)+1;
     }
 
-    public double getX() { return x; }
-    public double getY() { return y; }
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public char getId() {return id; }
 
     // Devuelve distancia entre dos ciudades
     public double distanceToCity(City p) {
@@ -36,8 +38,7 @@ public class City {
     }
 
     // Imprime coordenadas del nodo
-    // [!] - NOTA: Mejorar para que imprima un ID (Una letra en vez de numero?)
     public String toString (){
-        return String.format("[x: %.2f, y: %.2f]", getX(), getY());
+        return String.format("ID: %c [x: %d, y: %d]",getId(), getX(), getY());
     }
 }
