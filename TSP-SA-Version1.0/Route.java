@@ -1,7 +1,3 @@
-/*
-    Route.java - Version 1.0 (02/11/18)
-*/
-
 package TSP_V1;
 
 import java.util.ArrayList;
@@ -20,10 +16,14 @@ public class Route{
     // Atributos
     private ArrayList route = new ArrayList<City>();
     private int distance = 0;
+    private static City baseCity;
 
     // Constructor
-    // Recibe la lista de ciudades que existen en el caso, ya que se necesita su tamaño
+    // Recibe la lista de ciudades que existen en el caso
+    // -> Si se declaró una ciudad base: se copiará la ciudad base en la ruta y
+    //    la cantidad de ciudades en la ruta es una ciudad menor que el recorder
     public Route(CityRecorder recorder){
+        baseCity = recorder.getBaseCity();
         for (int i = 0; i < recorder.numOfCities(); i++) {
             route.add(null); // Se crea una ruta con espacios vacios (para ingresar ciudades)
         }
@@ -40,6 +40,9 @@ public class Route{
     public ArrayList getRoute(){
         return route;
     }
+
+    // Devuelve la ciudad base, si existe.
+    public City getBaseCity() { return baseCity; }
 
     // Asigno las ciudades que tengo en mi CityRecorder en una ruta, luego la desordeno
     // [!] - Necesita mejora/Otra forma
@@ -66,24 +69,51 @@ public class Route{
     // Devolver la distancia total de la ruta
     // [!] - Considero que se puede mejorar
     public int getDistance(){
-        if (distance == 0) {
-            int tourDistance = 0;
-            // Un ciclo entre todas las ciudades de la ruta
-            for (int cityIndex=0; cityIndex < routeSize(); cityIndex++) {
-                //Se elige una ciudad de origen y destino
-                City origin = getCity(cityIndex);
-                City destiny;
-                // Checar si no estamos devuelta en la ciudad origen
-                if(cityIndex+1 < routeSize()){
-                    destiny = getCity(cityIndex+1);
+        if(getBaseCity() == null){ //Si no existe una ciudad base
+            if (distance == 0) {
+                int tourDistance = 0;
+                // Un ciclo entre todas las ciudades de la ruta
+                for (int cityIndex=0; cityIndex < routeSize(); cityIndex++) {
+                    //Se elige una ciudad de origen y destino
+                    City origin = getCity(cityIndex);
+                    City destiny;
+                    // Checar si no estamos devuelta en la ciudad origen
+                    if(cityIndex+1 < routeSize()){
+                        destiny = getCity(cityIndex+1);
+                    }
+                    else{
+                        destiny = getCity(0);
+                    }
+                    // Se van acumulando las distancias
+                    tourDistance += origin.distanceToCity(destiny);
                 }
-                else{
-                    destiny = getCity(0);
-                }
-                // Se van acumulando las distancias
-                tourDistance += origin.distanceToCity(destiny);
+                distance = tourDistance;
             }
-            distance = tourDistance;
+        }
+        else{
+            if (distance == 0) { // Si EXISTE una ciudad base...
+                City lastCity = getCity(routeSize()-1); //Eligimos la ultima ciudad de la ruta (mas abajo porque)
+                int tourDistance = 0;
+                // Se saca la distancia entre la ciudad base y la primera ciudad de la ruta
+                tourDistance += getBaseCity().distanceToCity(getCity(0));
+                for (int cityIndex=0; cityIndex < routeSize(); cityIndex++) {
+                    //Se elige una ciudad de origen y destino
+                    City origin = getCity(cityIndex);
+                    City destiny;
+                    // Checar si no estamos devuelta en la ciudad origen
+                    if(cityIndex+1 < routeSize()){
+                        destiny = getCity(cityIndex+1);
+                    }
+                    else{
+                        destiny = getCity(0);
+                    }
+                    // Se van acumulando las distancias
+                    tourDistance += origin.distanceToCity(destiny);
+                }
+                // AL final, se saca la distancia entre la ultima ciudad (lastCity) y la ciudad base
+                tourDistance += lastCity.distanceToCity(getBaseCity());
+                distance = tourDistance;
+            }
         }
         return distance;
     }
@@ -97,11 +127,23 @@ public class Route{
     // [!] - Necesita mejora, un mejor formato de impresión
     @Override
     public String toString() {
-        String output = "[";
-        for (int i = 0; i < routeSize(); i++) {
-            output += getCity(i)+" -> ";
+        // Si NO existe una ciudad base
+        if(getBaseCity() == null){
+            String output = "";
+            for (int i = 0; i < routeSize(); i++) {
+                output += "-> "+getCity(i)+"\n";
+            }
+            output += "-> "+getCity(0);
+            return output;
+        }else{
+            // Si EXISTE una ciudad base
+            String output = "";
+            output += " -> "+getBaseCity()+" [BASE]";
+            for (int i = 0; i < routeSize(); i++) {
+                output += "\n -> "+getCity(i);
+            }
+            output += "\n -> "+getBaseCity()+" [BASE]";
+            return output;
         }
-        output += getCity(0)+"]";
-        return output;
     }
 }
