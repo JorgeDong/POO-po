@@ -1,7 +1,3 @@
-/*
-    SA (Simulated Annealing Algorithm) - Version 1.0 (02/11/18)
-*/
-
 package TSP_V1;
 
 /*
@@ -69,6 +65,7 @@ public class SA {
     public int getIterations() { return iterations; }
     public double getEnergy() { return energy; }
     public double getNewEnergy() { return newEnergy; }
+    public Route getBestRoute() { return bestRoute; }
 
     // Va a revisar que tan buena es la solucion encontrada
     // Si no es buena, no se descarta, ya que si aún se tiene una temp grande, hay
@@ -120,7 +117,6 @@ public class SA {
         // [!] - Necesitan mejora, ver otras opciones talvez
         shortestDistance(this.bestRoute);
         shortestRoute(this.bestRoute);
-        //return bestRoute.getDistance();
     }
 
     // Imprime la distancia más corta encontrada
@@ -130,7 +126,7 @@ public class SA {
 
     // Imprime la ruta mas corta encontrada y las iteraciones totales
     public void shortestRoute(Route bestRoute){
-        System.out.println("Shortest Route: " + bestRoute);
+        System.out.println("Shortest Route: \n" + bestRoute);
         System.out.println("Iterations: " + getIterations());
     }
 }
