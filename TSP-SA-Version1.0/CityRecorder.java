@@ -12,19 +12,49 @@ import java.util.ArrayList;
         y que cada algoritmo use esta clase y sus metodos
     Contiene:
     -> ArrayList allCities: Guarda todas las ciudades
+    -> City baseCity: Guarda la ciudad base donde se empieza a calcular las rutas
  */
 public class CityRecorder{
     // Atributos
     protected ArrayList allCities;
-
+    protected City baseCity;
 
     // Constructor
     public CityRecorder(){
+        this.baseCity = null;
         this.allCities = new ArrayList<City>();
     }
 
+    //Declaración de la ciudad base
+    public void declareBaseCity(City c){
+        // SI no se ha asignado una ciudad base, se declara igualmente
+        if(this.baseCity == null){
+            this.baseCity = c;
+            for(int i=0; i<this.numOfCities(); i++){
+                if(this.getCity(i) == c) {
+                    this.allCities.remove(i);
+                    break;
+                }
+            }
+        }
+        // SI ya ha sido declarada antes, nos aseguramos de guardar la ciudad base y
+        // ponerlo en la lista con las demás ciudades
+        else {
+            City temp = this.baseCity;
+            this.allCities.add(temp);
+            this.baseCity = c;
+            for(int i=0; i<this.numOfCities(); i++){
+                if(this.getCity(i) == c) {
+                    this.allCities.remove(i);
+                    break;
+                }
+            }
+        }
+    }
 
+    public City getBaseCity(){ return this.baseCity; }
     // Devuelve la lista completa de ciudades guardades en este CityRecorder
+      
     public ArrayList getRecorder() {
         return allCities;
     }
