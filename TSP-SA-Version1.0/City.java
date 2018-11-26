@@ -1,44 +1,36 @@
-/* 
-    City.java - Version 1.0 (02/11/18)
-*/
-
-package TSP_V1;
 
 import java.util.Random;
 
-/*
-    City: Representa un nodo en el mapa
-    -> Tiene coordenadas (x, y)
-    -> Un ID que lo representa (Una letra)
- */
 public class City {
-    //Atributos
+    private static int count = 65;
+
     private char id;
     private int x, y;
 
-    //Constructores
-    public City(double x, double y) {
+    public City(int x, int y, char id) {
         this.x = x;
         this.y = y;
         this.id = id;
+        count++;
     }
     public City() {
         Random r = new Random();
         this.x = r.nextInt(200)+1; // Va de 1 a 200
         this.y = r.nextInt(200)+1;
+        this.id = (char)count++;
     }
 
     public int getX() { return x; }
     public int getY() { return y; }
     public char getId() {return id; }
 
-    // Devuelve distancia entre dos ciudades
-    public double distanceToCity(City p) {
-        return Math.sqrt(Math.pow(this.x - p.x,2) + Math.pow(this.y - p.y, 2));
+    public double distanceToCity(City c) {
+        return Math.sqrt(Math.pow(this.x - c.x, 2) + Math.pow(this.y - c.y, 2));
     }
 
-    // Imprime coordenadas del nodo
     public String toString (){
-        return String.format("ID: %c [x: %d, y: %d]",getId(), getX(), getY());
+
+        return String.format("[%c]",getId());
+        //return String.format("ID: %c [x: %d, y: %d]",getId(), getX(), getY());
     }
 }
