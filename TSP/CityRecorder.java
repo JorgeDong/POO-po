@@ -2,10 +2,16 @@ package TSP;
 
 import java.util.ArrayList;
 
+/*
+    Aqui se guardan todas las ciudades que se quiera calcular el TSP
+
+    Se comporta CASI igual que Route, pero tiene manejo de que ciudades entran
+    en el recorder, asignar la ciudad base y guardar la ciudad base.
+ */
+
 public class CityRecorder{
     private ArrayList<City> cities;
     private City baseCity;
-
 
     public CityRecorder(){
         this.baseCity = null;

@@ -3,12 +3,23 @@ package TSP;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/*
+    Route: Es una clase que guarda una ruta de n ciudades
+    Utiliza el recorder para saber el número de ciudades que tiene que guardar
+
+    OJO: Si existe una ciudad base, el tamaño de la ruta no toma en cuenta la base, ya que la ciudad
+        base se maneja aparte en el recorder. Esto no afecta en el calculo de getDistance()
+        ya que toma en cuenta la ciudad base que da el recorder
+ */
 public class Route {
 
     private ArrayList<City> route = new ArrayList<>();
     private double distance = 0;
-    private static City baseCity;
+    private static City baseCity; //Recibo la ciudad base del recorder y lo manejo como variable
+                                   //global para toda Route creada
 
+    //Crea una ruta con N espacios PERO vacia (null)
+    //En metodo fillCities() lleno la ruta con las ciudades que tengo en el recorder
     public Route(CityRecorder recorder) {
         baseCity = recorder.getBaseCity();
         for (int i = 0; i < recorder.getNumOfCities(); i++) {
@@ -34,7 +45,8 @@ public class Route {
         this.distance = 0;
     }
 
-    public void fillCities(CityRecorder recorder) { //Poner otro nombre
+    // Llenar una ruta con ciudades del recorder (ordenamineto al azar)
+    public void fillCities(CityRecorder recorder) {
         for (int i=0; i < recorder.getNumOfCities(); i++) {
             setCity(i, recorder.getCity(i));
         }

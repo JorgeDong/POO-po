@@ -1,17 +1,15 @@
 package TSP;
 
-public class BruteForce {
-    protected long iterations;
-    protected CityRecorder recorder;
-    protected Route bestRoute;
-    protected double shortestDistance;
-    protected long timer;
+public class BruteForce extends Information implements Algorithm{
 
     public BruteForce(){
-        this.iterations = 0;
-        this.shortestDistance = -1;
-        this.timer = 0;
+        super(); //Extiende a Information (inicializar mis variables)
     }
+
+    public Route getBestRoute(){ return super.bestRoute; }
+    public long getRuntime() { return super.timer; }
+    public double getShortestDistance() { return super.shortestDistance;}
+    public long getIterations() { return super.iterations; }
 
     public void solve(CityRecorder recorder){
         long startTime = System.nanoTime();
@@ -25,9 +23,10 @@ public class BruteForce {
         bestRoute = new Route(recorder);
         bestRoute.cloneRoute(currentRoute.getRoute());
 
-        permute(currentRoute, 0);
+        permute(currentRoute, 0); //Recursivo
         long endTime = System.nanoTime();
-        this.timer = (endTime - startTime)/1000000; // milis: /1000000
+
+        runtime(startTime, endTime);
 
         printShortestDistance();
         printShortestRoute();
@@ -41,6 +40,7 @@ public class BruteForce {
                 shortestDistance = route.getDistance();
                 bestRoute.cloneRoute(route.getRoute());
             }
+            super.iterations++;
             return;
         }
 
@@ -63,11 +63,16 @@ public class BruteForce {
         }
     }
 
+    public void runtime(long start, long end){
+        super.timer = (end - start)/1000000;
+    }
+
     public void printShortestDistance(){
-        System.out.printf("Final solution distance: %.2f (Time: %d mls.)\n", this.shortestDistance, this.timer);
+        System.out.printf("Final solution distance: %.2f (Time: %d mls.)\n", getShortestDistance(), getRuntime());
     }
     public void printShortestRoute(){
-        System.out.println("Shortest Route: \n" + this.bestRoute);
+        System.out.println("Shortest Route: \n" + getBestRoute());
+        System.out.println("Iterations: " + getIterations());
     }
 
 }
