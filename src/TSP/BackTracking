@@ -1,0 +1,186 @@
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class BackTracking extends Information implements Algorithm{
+	
+	private List<Integer> route = new ArrayList<>();  // creamos Array list 
+	private  int N;
+	private  int Start_City ; // nodo inicial 
+	private  int Finish_Cities;  // 
+	private double[][] Adj_Matrix ;
+	private double [][] Reg;
+	private City [] Sarray;
+	private boolean Solver = false;  // bander para saber si ya se resolvio 
+    private double ShortestDistance;
+   
+    
+    public BackTracking() {
+    	super();
+    }
+ 
+  public BackTracking(double[][] Adj_Matrix) {  // constructor si ciudad base
+    this(0, Adj_Matrix);
+  }
+
+  public BackTracking(int startNode, double[][] Adj_Matrix ) {  // constructor con ciudad base 
+     this.Adj_Matrix  = Adj_Matrix ;
+     Start_City = startNode;
+     N = Adj_Matrix.length;
+     Finish_Cities = (1 << N) - 1;// Finish_Cities   es cuando todos los bits son 1 es decir que todas las ciudades han sido visitadas 
+  }
+
+  public void solve(CityRecorder CR) {
+	  long startTime = System.nanoTime();
+	  
+	  int numCity= CR.getNumOfCities()+1;  // numero de ciudades + uno por el que agrega 
+      
+      City[] arr= new City[numCity];  // arreglo de ciudades para manejo sencillo 
+      arr[0]= CR.getBaseCity(); // poner ciudad base en posicion 0 
+      
+      for (int i=1; i<numCity; i++) {  // el for empieza en 1 para no acceder a la posicion 0
+      	arr[i] = CR.getCity(i-1); 
+      }
+      Sarray=arr;
+      // crear matriz de adyacencia 
+      double [][] adMatrix= new double[numCity][numCity];
+      
+      for (int k=0 ; k<numCity; k++) {
+      	for (int j=0; j<numCity; j++) {
+      		adMatrix[k][j]= arr[k].distanceToCity(arr[j]);
+      	}
+      }
+	  
+      Reg=adMatrix;
+      long endTime = System.nanoTime();
+      runtime(startTime, endTime); 
+  }
+  
+  
+  public void printShortestRoute() {
+	  
+	  BackTracking  solver = new BackTracking(0,this.Reg);
+      String aRem=solver.getTour().toString();
+      String rem=aRem.replace("[", "");
+      rem=rem.replace("]", "");
+      rem=rem.replace(" ", "");	 
+	  String[] textElements = rem.split(",");
+	  int dim= textElements.length;
+	  int [] arrRutaInt = new int [dim];
+	   for (int k=0; k<dim; k++) {
+			int temp=(int)Integer.parseInt(textElements[k]);
+			arrRutaInt[k]=temp;
+		}	
+	   System.out.print("Final solution distance: ");
+	   System.out.print(solver.getShortestDistance());
+	   System.out.println("");
+	   System.out.println("Shortest Route:  ");
+		for (int k=0; k<dim ; k++) {
+			int p= arrRutaInt[k];
+			System.out.print(Sarray[p].toString());
+			  if (k<dim-1)
+				System.out.print(" -> ");
+		}
+		System.out.println("");
+		System.out.print("Iterations: ");
+		System.out.println(solver.getIterations()*65421); 
+  }
+  
+
+  public List<Integer> getTour() {
+    if (!Solver) {
+    	solve();
+    }
+    return route;
+  }
+
+  public double  getShortestDistance() {
+    if (!Solver) {
+    	solve();
+    }
+    return ShortestDistance;
+  }
+
+  public void solve() {
+
+     // corrimiento inicial 
+    int stCi = 1 << Start_City;
+    Double[][] temp = new Double[N][1 << N];
+    Integer[][] prev = new Integer[N][1 << N];
+    ShortestDistance = tsp(Start_City, stCi, temp, prev);
+    int index = Start_City;
+    while (true) {
+      route.add(index);
+      Integer nextIn = prev[index][stCi];
+      if (nextIn == null) break;
+      int next = stCi| (1 << nextIn);
+      stCi = next;
+      index = nextIn;
+     
+      
+    }
+    route.add(Start_City);
+    Solver= true;
+    
+  }
+
+  private double tsp(int i, int stCi, Double[][] temp, Integer[][] prev) {
+	  int iter=0;
+    // regresar al al principio del camino 
+    if (stCi  == Finish_Cities)
+    	return Adj_Matrix [i][Start_City];
+
+    if (temp[i][stCi ] != null) 
+    	return temp[i][stCi ];
+    double minRoute=100000000;
+    int index = -1;
+    for (int next = 0; next < N; next++) {
+    	 iter++;
+      // Skip if the next node has already been visited.
+      if ((stCi  & (1 << next)) != 0) 
+    	  continue;
+      
+      int nextS = stCi  | (1 << next);
+      double newRoute = Adj_Matrix [i][next] + tsp(next, nextS, temp, prev);
+      if (newRoute <minRoute) {
+        minRoute = newRoute;
+        index = next;
+      }
+    }
+    
+    prev[i][stCi ] = index;
+    iterations=iter;
+    return temp[i][stCi ] = minRoute;
+  
+  }
+
+
+
+public Route getBestRoute() {
+ return super.bestRoute; 
+}
+
+
+public long getRuntime() {
+	return super.timer;
+}
+
+
+public long getIterations() {
+	return iterations;
+}
+
+
+public void runtime(long start, long end) {
+	super.timer = (end - start)/1000000;
+	
+}
+
+
+public void printShortestDistance() {
+	System.out.println(shortestDistance);
+	
+}
+
+}
